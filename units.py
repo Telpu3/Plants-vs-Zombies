@@ -27,7 +27,7 @@ class Unit(ABC):
 # --- Тип 1: Растения-стрелки ---
 class Peashooter(Unit):
     def __init__(self, x, y):
-        super().__init__(x, y, hp=50, armor=2, attack=20, symbol='🌱')
+        super().__init__(x, y, hp=50, armor=2, attack=20, symbol='P')
     def move(self, new_x, new_y): self.x, self.y = new_x, new_y
     def use_ability(self, board):
         print(f"[СПОСОБНОСТЬ] 🌱 Горохострел выпускает залп по всем зомби!")
@@ -38,7 +38,7 @@ class Peashooter(Unit):
 
 class SnowPea(Unit):
     def __init__(self, x, y):
-        super().__init__(x, y, hp=60, armor=3, attack=15, symbol='❄️')
+        super().__init__(x, y, hp=60, armor=3, attack=15, symbol='S')
     def move(self, new_x, new_y): self.x, self.y = new_x, new_y
     def use_ability(self, board):
         print(f"[СПОСОБНОСТЬ] ❄️ Снежный горох замораживает врагов!")
@@ -50,7 +50,7 @@ class SnowPea(Unit):
 @mixin_interaction
 class BasicZombie(Unit):
     def __init__(self, x, y):
-        super().__init__(x, y, hp=100, armor=1, attack=10, symbol='🧟')
+        super().__init__(x, y, hp=100, armor=1, attack=10, symbol='Z')
     def move(self, new_x, new_y): self.x, self.y = new_x, new_y
     def use_ability(self, board):
         print(f"[СПОСОБНОСТЬ] 🧟 Зомби кусает воздух и восстанавливает 20 HP!")
@@ -58,17 +58,17 @@ class BasicZombie(Unit):
 @mixin_interaction
 class BucketZombie(Unit):
     def __init__(self, x, y):
-        super().__init__(x, y, hp=200, armor=10, attack=15, symbol='🪣')
+        super().__init__(x, y, hp=200, armor=10, attack=15, symbol='B')
     def move(self, new_x, new_y): self.x, self.y = new_x, new_y
 
 # --- Тип 3: Спецназ ---
 class PotatoMine(Unit):
     def __init__(self, x, y):
-        super().__init__(x, y, hp=30, armor=0, attack=100, symbol='🥔')
+        super().__init__(x, y, hp=30, armor=0, attack=100, symbol='M')
     def move(self, new_x, new_y): self.x, self.y = new_x, new_y
 
 @mixin_interaction
 class FootballZombie(Unit):
     def __init__(self, x, y):
-        super().__init__(x, y, hp=150, armor=5, attack=25, symbol='🏈')
+        super().__init__(x, y, hp=150, armor=5, attack=25, symbol='F')
     def move(self, new_x, new_y): self.x, self.y = new_x, new_y

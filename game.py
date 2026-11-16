@@ -6,16 +6,19 @@ class Board:
         self.width = width
         self.height = height
         self.units = [] # Хранение юнитов
-
-        # Генерируем случайный ландшафт (3 типа)
         self.grid = []
-        landscapes = [Grass(), Grass(), Grass(), Water(), Roof()]
+        # Генерируем случайный ландшафт (3 типа)
         for y in range(height):
             row = []
             for x in range(width):
-                land = random.choice(landscapes)
-                row.append(land.symbol)
+                if x < width // 3:
+                    row.append(Grass().symbol)  # Левая треть - трава
+                elif x < (width // 3) * 2:
+                    row.append(Water().symbol)  # Средняя треть - вода
+                else:
+                    row.append(Roof().symbol)   # Правая треть - крыша
             self.grid.append(row)
+            
     def add_unit(self, unit):
         # Ограничиваем максимальное количество юнитов
         if len(self.units) >= 20:

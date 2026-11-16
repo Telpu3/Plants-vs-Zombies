@@ -9,6 +9,10 @@ def main():
     
     # Создаем поле и базу
     board = Board(10, 10)
+
+    # Рисуем дом
+    for y in range(10):
+        board.grid[y][0] = '🏠'
     plant_base = Base("Дом Растений", hp=1000, max_units=10)
     
     # Создаем стартовых юнитов
@@ -83,7 +87,11 @@ def main():
                 except ValueError:
                     print("Ошибка: нужно вводить числа!")
             elif sub_choice == '2':
-                p1.use_ability(board)                
+                p1.use_ability(board)
+                # Очищаем поле от погибших юнитов
+                for unit in list(board.units):
+                    if unit.hp <= 0:
+                        board.remove_unit(unit)         
         elif choice == '3':
             UnitTracker.load_from_json()
             
