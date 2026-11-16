@@ -69,29 +69,49 @@ def main():
                     
         elif choice == '2':
             # Меню управления юнитом
-            print("\nЮнит 🌱 готов к приказу!")
-            print("1 - Перемещение")
-            print("2 - Использование способности")
-            sub_choice = input("Выбор действия: ")
+            plants = [u for u in board.units if "Zombie" not in u.__class__.__name__]
+            if not plants:
+                print("На поле нет ваших растений!")
+                continue # Возвращаемся в главное меню
+            print("\n--- ВАШИ РАСТЕНИЯ ---")
+            for i, plant in enumerate(plants):
+                print(f"{i} - {plant.symbol} (HP: {plant.hp}) в координатах ({plant.x}, {plant.y})")
             
-            if sub_choice == '1':
-                try:
-                    new_x = int(input("Введите новую координату X (0-9): "))
-                    new_y = int(input("Введите новую координату Y (0-9): "))
-                    if 0 <= new_x < board.width and 0 <= new_y < board.height:
-                        board.remove_unit(p1)
-                        p1.move(new_x, new_y)
-                        board.add_unit(p1)
-                    else:
-                        print("Ошибка: координаты за пределами поля!")
-                except ValueError:
-                    print("Ошибка: нужно вводить числа!")
-            elif sub_choice == '2':
-                p1.use_ability(board)
-                # Очищаем поле от погибших юнитов
-                for unit in list(board.units):
-                    if unit.hp <= 0:
-                        board.remove_unit(unit)         
+            try:
+                selected_idx = int(input("Выберите номер растения: "))
+                if selected_idx < 0 or selected_idx >= len(plants):
+                    print("Неверный номер!")
+                    continue
+                
+                selected_plant = plants[selected_idx]
+                
+                # Теперь работаем с выбранным растением!
+                print(f"\nВыбран юнит {selected_plant.symbol}.")
+                print("1 - Перемещение")
+                print("2 - Использование способности")
+                sub_choice = input("Выбор действия: ")
+                
+                if sub_choice == '1':
+                    try:
+                        new_x = int(input("Введите новую координату X (0-9): "))
+                        new_y = int(input("Введите новую координату Y (0-9): "))
+                        if 0 <= new_x < board.width and 0 <= new_y < board.height:
+                            board.remove_unit(selected_plant)
+                            selected_plant.move(new_x, new_y)
+                            board.add_unit(selected_plant)
+                        else:
+                            print("Ошибка: координаты за пределами поля!")
+                    except ValueError:
+                        print("Ошибка: нужно вводить числа!")
+                elif sub_choice == '2':
+                    selected_plant.use_ability(board)
+                    # Очищаем поле от погибших зомби
+                    for unit in list(board.units):
+                        if unit.hp <= 0:
+                            board.remove_unit(unit)
+            except ValueError:
+                print("Ошибка: нужно ввести число.")       
+
         elif choice == '3':
             UnitTracker.load_from_json()
             
@@ -99,21 +119,24 @@ def main():
             UnitTracker.save_to_json()
             
         elif choice == '5':
-            rx = random.randint(0, 9)
-            ry = random.randint(0, 9)
-            if random.random() > 0.5:
-                new_z = BasicZombie(rx, ry)
-            else:
-                new_z = BucketZombie(rx, ry)
-            board.add_unit(new_z)
-            UnitTracker("Zombie")
-            print(f"На поле появился новый зомби в координатах ({rx}, {ry})!")
+            for _ in range(100): 
+                rx = random.randint(0, 9)
+                ry = random.randint(0, 9)
+                if board.get_unit_at(rx, ry) is None:
+                    if random.random() > 0.5:
+                        new_z = BasicZombie(rx, ry)
+                    else:
+                        new_z = BucketZombie(rx, ry)
+                    board.add_unit(new_z)
+                    UnitTracker("Zombie")
+                    print(f"На поле появился новый зомби в координатах ({rx}, {ry})!")
+                    break 
 
         elif choice == '6':
             print("\n[ХОД ЗОМБИ] Зомби начинают движение...")
             for unit in list(board.units):
                 if "Zombie" in unit.__class__.__name__:
-                    if unit.x > 0:
+                    if unit.x >= 0:
                         target = board.get_unit_at(unit.x - 1, unit.y)
                         
                         if target is None:
