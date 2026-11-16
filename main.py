@@ -12,7 +12,7 @@ def main():
 
     # Рисуем дом
     for y in range(10):
-        board.grid[y][0] = '🏠'
+        board.grid[y][0] = 'H'
     plant_base = Base("Дом Растений", hp=1000, max_units=10)
     
     # Создаем стартовых юнитов
