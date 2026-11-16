@@ -1,7 +1,8 @@
 from game import Board
-from units import Peashooter, BasicZombie, SnowPea
+from units import Peashooter, BasicZombie, SnowPea, BucketZombie
 from task4 import UnitTracker
 from base import Base
+import random
 
 def main():
     print("=== 🌻 PLANTS VS ZOMBIES: CONSOLE EDITION 🧟 ===")
@@ -29,11 +30,13 @@ def main():
         print("2 - Управление юнитом")
         print("3 - Загрузить игру")
         print("4 - Сохранить игру")
-        print("5 - Закончить игру")
+        print("5 - Новый зомби")
+        print("6 - Конец хода")
+        print("7 - Закончить игру")
         
         choice = input("\nВыбор: ")
         
-        if choice == '5':
+        if choice == '7':
             print("Игра завершена!")
             break
             
@@ -64,7 +67,7 @@ def main():
             # Меню управления юнитом
             print("\nЮнит 🌱 готов к приказу!")
             print("1 - Перемещение")
-            print("2 - Использование способности (в разработке)")
+            print("2 - Использование способности")
             sub_choice = input("Выбор действия: ")
             
             if sub_choice == '1':
@@ -80,13 +83,45 @@ def main():
                 except ValueError:
                     print("Ошибка: нужно вводить числа!")
             elif sub_choice == '2':
-                print("Способности появятся в следующем обновлении.")
-                
+                p1.use_ability(board)                
         elif choice == '3':
             UnitTracker.load_from_json()
             
         elif choice == '4':
             UnitTracker.save_to_json()
+            
+        elif choice == '5':
+            rx = random.randint(0, 9)
+            ry = random.randint(0, 9)
+            if random.random() > 0.5:
+                new_z = BasicZombie(rx, ry)
+            else:
+                new_z = BucketZombie(rx, ry)
+            board.add_unit(new_z)
+            UnitTracker("Zombie")
+            print(f"На поле появился новый зомби в координатах ({rx}, {ry})!")
+
+        elif choice == '6':
+            print("\n[ХОД ЗОМБИ] Зомби начинают движение...")
+            for unit in list(board.units):
+                if "Zombie" in unit.__class__.__name__:
+                    if unit.x > 0:
+                        target = board.get_unit_at(unit.x - 1, unit.y)
+                        
+                        if target is None:
+                            board.remove_unit(unit)
+                            unit.move(unit.x - 1, unit.y)
+                            board.add_unit(unit)
+                            print(f"Зомби {unit.symbol} шагнул на клетку влево (X={unit.x}).")
+                        elif "Zombie" not in target.__class__.__name__:
+                            print(f"Зомби {unit.symbol} атакует растение {target.symbol}!")
+                            target.take_damage(unit.attack)
+                            if target.hp <= 0:
+                                board.remove_unit(target)
+                                print(f"Растение {target.symbol} уничтожено зомби!")
+                        else:
+                            print(f"Зомби {unit.symbol} не может пройти, там другой зомби.")
+            print("[ХОД ЗОМБИ] Все зомби сделали ход.")
             
         else:
             print("Неверный выбор.")

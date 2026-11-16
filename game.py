@@ -1,13 +1,21 @@
 import copy
-
+import random
+from landscape import Grass, Water, Roof
 class Board:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        # Создаем сетку, заполненную точками 
-        self.grid = [['.' for _ in range(width)] for _ in range(height)]
         self.units = [] # Хранение юнитов
 
+        # Генерируем случайный ландшафт (3 типа)
+        self.grid = []
+        landscapes = [Grass(), Grass(), Grass(), Water(), Roof()]
+        for y in range(height):
+            row = []
+            for x in range(width):
+                land = random.choice(landscapes)
+                row.append(land.symbol)
+            self.grid.append(row)
     def add_unit(self, unit):
         # Ограничиваем максимальное количество юнитов
         if len(self.units) >= 20:
@@ -25,7 +33,11 @@ class Board:
             # Очищаем клетку
             self.grid[unit.y][unit.x] = '.'
             print(f"Юнит {unit.symbol} убран с поля.")
-
+    def get_unit_at(self, x, y):
+        for unit in self.units:
+            if unit.x == x and unit.y == y:
+                return unit
+        return None
     def display(self):
         print("\n   " + " ".join(str(i) for i in range(self.width)))
         for y in range(self.height):
