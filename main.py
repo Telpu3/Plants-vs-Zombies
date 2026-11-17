@@ -58,14 +58,26 @@ def main():
                 print("2 - Снежный горох (❄️)")
                 unit_choice = input("Выбор типа юнита: ")
                 
-                if unit_choice == '1':
-                    new_unit = Peashooter(2, 2) # Создаем на координатах 2,2
-                    plant_base.create_unit(new_unit, board)
-                    UnitTracker("Peashooter")
-                elif unit_choice == '2':
-                    new_unit = SnowPea(3, 3) # Создаем на координатах 3,3
-                    plant_base.create_unit(new_unit, board)
-                    UnitTracker("SnowPea")
+                if unit_choice in ['1', '2']:
+                    # Ищем свободную траву для посадки
+                    placed = False
+                    for y in range(board.height):
+                        for x in range(board.width):
+                            if board.grid[y][x] == '.' and board.get_unit_at(x, y) is None:
+                                if unit_choice == '1':
+                                    new_unit = Peashooter(x, y)
+                                    UnitTracker("Peashooter")
+                                else:
+                                    new_unit = SnowPea(x, y)
+                                    UnitTracker("SnowPea")
+                                
+                                plant_base.create_unit(new_unit, board)
+                                placed = True
+                                break 
+                        if placed:
+                            break 
+                    if not placed:
+                        print("На поле нет свободной травы для посадки!")
                     
         elif choice == '2':
             # Меню управления юнитом
@@ -122,7 +134,7 @@ def main():
             for _ in range(100): 
                 rx = random.randint(0, 9)
                 ry = random.randint(0, 9)
-                if board.get_unit_at(rx, ry) is None:
+                if board.get_unit_at(rx, ry) is None and board.grid[ry][rx] != '^':
                     if random.random() > 0.5:
                         new_z = BasicZombie(rx, ry)
                     else:
